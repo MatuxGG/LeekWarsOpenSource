@@ -1,0 +1,149 @@
+// M_Debug v1.0 - By Matux
+
+global integer COLOR_ORANGE = getColor(255, 147, 0);
+global integer COLOR_CAROT = getColor(244, 102, 27);
+global integer COLOR_PURPLE = getColor(128, 0, 128);
+global integer COLOR_YELLOW = getColor(255, 255, 0);
+global integer COLOR_CYAN = getColor(0, 255, 255);
+global integer COLOR_AZUR = getColor(0, 127, 255);
+global integer COLOR_BROWN = getColor(112, 56, 0);
+global integer COLOR_CHOCOLATE = getColor(90, 58, 34);
+global integer COLOR_MAGENTA = getColor(255, 0, 255);
+global integer COLOR_LIME = getColor(191, 255, 0);
+global integer COLOR_NAVY = getColor(0, 0, 128);
+global integer COLOR_TEAL = getColor(0, 128, 128);
+global integer COLOR_OLIVE = getColor(128, 128, 0);
+global integer COLOR_MAROON = getColor(128, 0, 0);
+global integer COLOR_AQUA = getColor(0, 255, 255);
+global integer COLOR_FUCHSIA = getColor(255, 0, 255);
+global integer COLOR_SILVER = getColor(192, 192, 192);
+global integer COLOR_GRAY = getColor(128, 128, 128);
+global integer COLOR_BEIGE = getColor(245, 245, 220);
+global integer COLOR_CORAL = getColor(255, 127, 80);
+global integer COLOR_TOMATO = getColor(255, 99, 71);
+global integer COLOR_GOLD = getColor(255, 215, 0);
+global integer COLOR_SALMON = getColor(250, 128, 114);
+global integer COLOR_PINK = getColor(255, 192, 203);
+global integer COLOR_VIOLET = getColor(238, 130, 238);
+global integer COLOR_PLUM = getColor(221, 160, 221);
+global integer COLOR_TURQUOISE = getColor(64, 224, 208);
+global integer COLOR_INDIGO = getColor(75, 0, 130);
+global integer COLOR_KHAKI = getColor(240, 230, 140);
+global integer COLOR_IVORY = getColor(255, 255, 240);
+global integer COLOR_LAVENDER = getColor(230, 230, 250);
+global integer COLOR_PEACH = getColor(255, 218, 185);
+global integer COLOR_MINT = getColor(189, 252, 201);
+global integer COLOR_CERULEAN = getColor(0, 123, 167);
+global integer COLOR_ROSE = getColor(255, 0, 127);
+global integer COLOR_RUBY = getColor(224, 17, 95);
+global integer COLOR_COPPER = getColor(184, 115, 51);
+global integer COLOR_BRONZE = getColor(205, 127, 50);
+global integer COLOR_TAN = getColor(210, 180, 140);
+global integer COLOR_MAHOGANY = getColor(192, 64, 0);
+global integer COLOR_CREAM = getColor(255, 253, 208);
+global integer COLOR_CRIMSON = getColor(220, 20, 60);
+global integer COLOR_EMERALD = getColor(80, 200, 120);
+global integer COLOR_JADE = getColor(0, 168, 107);
+global integer COLOR_LILAC = getColor(200, 162, 200);
+global integer COLOR_PERIWINKLE = getColor(204, 204, 255);
+global integer COLOR_MOSS = getColor(173, 223, 173);
+global integer COLOR_CHARCOAL = getColor(54, 69, 79);
+global integer COLOR_AMBER = getColor(255, 191, 0);
+global integer COLOR_SAPPHIRE = getColor(15, 82, 186);
+global integer COLOR_EBONY = getColor(85, 93, 80);
+
+global integer COLOR_0 = getColor(255, 255, 0);
+global integer COLOR_1 = getColor(255, 150, 0);
+global integer COLOR_2 = getColor(255, 50, 0);
+global integer COLOR_3 = getColor(200, 0, 0);
+global integer COLOR_4 = getColor(100, 0, 0);
+
+global Array<integer> ROTATING_COLORS = [COLOR_0, COLOR_1, COLOR_2, COLOR_3, COLOR_4];
+
+class M_Debug {
+	
+	static op;
+	
+	// Write a message with a title between []
+	public static write(string title, any text, integer color = COLOR_BLUE) {
+		debugC("[" + title + "] " + text, color);
+	}
+	
+	// Show the total amount of operations used
+	public static showOp() {
+		var op = getOperations();
+		debugC((round(op / 10000) / 100)
+			   + "M OP (" + (abs(round(10000*op/OPERATIONS_LIMIT)/100))
+			   + "%)", COLOR_PURPLE);
+	}
+	
+	// Show your current TP
+	public static showTp() {		
+		debugC("TP: " + getTP(), COLOR_PURPLE);
+	}
+	
+	// Show your current MP
+	public static showMp() {		
+		debugC("MP: " + getMP(), COLOR_PURPLE);
+	}
+	
+	// Show your current Strenght
+	public static showFor() {		
+		debugC("STR: " + getStrength(), COLOR_CYAN);
+	}
+	
+	// Show your current Agility
+	public static showAgi() {		
+		debugC("AGI: " + getAgility(), COLOR_CYAN);
+	}
+	
+	// Initialize the operations for endOp
+	public static startOp() {
+		op = getOperations();
+	}
+	
+	// Show the number of operations consummed since latest call to startOp
+	public static endOp(any title, integer color = COLOR_BLUE) {
+		var newOp = getOperations();
+		var opDiff = newOp - op - 3;
+		debugC("OP: " + title + " = " + opDiff, color);
+		op = newOp + 154;
+	}
+	
+	// Mark a cell only with a pause
+	public static show(integer cell, integer color) {
+		clearMarks();
+		mark(cell, color);
+		pause();
+	}
+	
+	// Add a mark for a cell without pause
+	public static showNoCNoP(integer cell, integer color) {
+		mark(cell, color);
+	}
+	
+	// Show with various colors an Access Map (distance => Array<cellId>)
+	public static showAccess(Map<integer, Array<integer>> accessMap) {
+		clearMarks();
+		for (integer dist:Array<integer> cells in accessMap) {
+			for (integer cell in cells) {
+				if (dist > 0) {
+					mark(cell, ROTATING_COLORS[dist%5]);
+				}
+			}
+		}
+		pause();
+	}
+	
+	// Show with various colors a Binary Map (cellId => distance)
+	public static showBinary(Map<integer,integer> binaryMap) {
+		clearMarks();
+		for (integer cellId = 0; cellId < 613; cellId++) {
+			integer mp = mapGet(binaryMap, cellId) as integer;
+			if (mp > 0) {
+				mark(cellId, ROTATING_COLORS[mp%5]);
+			}
+		}
+		pause();
+	}
+}
