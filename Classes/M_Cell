@@ -1,0 +1,22 @@
+// M_Cell v1.0 by Matux
+
+class M_Cell {
+	integer id
+	boolean obstacle
+	integer x
+	integer y
+	integer? top
+	integer? bot
+	integer? left
+	integer? right
+	constructor(integer cellId) {
+		this.id = cellId;
+		this.obstacle = isObstacle(cellId) ? true : false;
+		this.x = getCellX(cellId)!;
+		this.y = getCellY(cellId)!;
+		this.left = getCellFromXY(x-1, y);
+		this.right = getCellFromXY(x+1, y);
+		this.top = getCellFromXY(x, y-1);
+		this.bot = getCellFromXY(x, y+1);
+	}
+}
